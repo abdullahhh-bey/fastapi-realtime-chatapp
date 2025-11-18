@@ -5,12 +5,10 @@ from datetime import datetime
 class User(Base):
     __tablename__ = "users"
     
-    id = Column(Integer, nullable=False)
-    username = Column(String , nullable=False, index=True)    
+    id = Column(Integer, nullable=False, primary_key=True)
+    username = Column(String(150) , nullable=False, index=True)    
     email = Column(String, nullable=False)
     hashed_password = Column(String)
     isRegistered = Column(Boolean , default = False)
     createdAt = Column(DateTime , default = datetime.utcnow)
 
-
-Base.metadata.create_all(bind=engine)
