@@ -38,7 +38,28 @@ class AuthService():
         return self.db.query(User).all()
     
         
-    def login():
-        pass
+    def login(self, user : UserLogin):
+        u = self.db.query(User).filter( User.email == user.email ).first()
+        if u is None:
+            raise HTTPException(
+                status_code=404,
+                detail = "No user registered"
+            )
+            
+        passwordCheck = verify_password(user.password , u.hashed_password)
+        if not passwordCheck:
+            raise HTTPException(
+                status_code=400,
+                detail="Wrong Password"
+            )
+        
+        data = {
+            "sub" : u.username,
+            "email" : u.email, 
+        }
+        accessToken = create_access_token(data)
+        return {
+            "access-token" : accessToken
+        } 
         
     

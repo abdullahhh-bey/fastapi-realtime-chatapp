@@ -25,3 +25,7 @@ def getUsers(service : AuthService = Depends(get_auth_service)):
     u = service.getUsers()
     return u
     
+@AuthRouter.post("/login")
+def login(user : UserLogin, service : AuthService = Depends(get_auth_service)) -> dict:
+    u = service.login(user)
+    return u
