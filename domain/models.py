@@ -1,5 +1,5 @@
-from infrastructure.database import Base, engine
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime
+from infrastructure.database import Base
+from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from datetime import datetime
 
 class User(Base):
