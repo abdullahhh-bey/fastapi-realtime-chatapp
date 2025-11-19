@@ -1,9 +1,8 @@
 from datetime import datetime, timedelta
-from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-SECRET_KEY = "your-secret-key-here-change-this-in-production"  
+SECRET_KEY = "your-secret-key-here-change"  
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

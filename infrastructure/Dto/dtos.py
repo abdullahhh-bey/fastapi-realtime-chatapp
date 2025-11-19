@@ -4,7 +4,7 @@ from datetime import datetime
 class UserRegister(BaseModel):
     username : str = Field(...)   
     email : str = Field(..., description="Email should be valid")
-    hashed_password  : str = Field(..., description="Enter valid Password")
+    password  : str 
     
     
 class UserLogin(BaseModel):

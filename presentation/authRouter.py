@@ -15,8 +15,13 @@ def get_auth_service(db : Session = Depends(get_db)):
     return AuthService(db)
 
 
-@AuthRouter.get("/")
+@AuthRouter.post("/register", response_model=UserDetails)
+def register(user : UserRegister, service : AuthService = Depends(get_auth_service)):
+    u = service.register(user)
+    return u
+
+@AuthRouter.get("/users", response_model=list[UserDetails])
 def getUsers(service : AuthService = Depends(get_auth_service)):
-    u = service.register()
+    u = service.getUsers()
     return u
     
