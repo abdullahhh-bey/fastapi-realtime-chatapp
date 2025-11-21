@@ -3,7 +3,7 @@ from infrastructure.Dto.dtos import UserDetails, UserLogin, UserRegister
 from domain.models import User
 from datetime import datetime
 from fastapi import HTTPException
-from .auth_functions import verify_password, get_password_hash, create_access_token, decode_access_token
+from .auth_functions import verify_password, get_password_hash, create_access_token, decode_access_token, decode_reset_password_token
 from .email_service import send_email
 
 class AuthService():
@@ -129,4 +129,21 @@ class AuthService():
         await send_email(user.email, "Reset your password", html)
         return "Reset Password email has been sent to your gmail."
     
-    
+
+
+    def resetPassword(self, newPassword : str, token : str) -> str:
+        email = decode_reset_password_token(token)
+        user = self.db.query(User).filter(User.email == email).first()
+        if not user:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid Token"
+            )
+            
+        hashedPass = get_password_hash(newPassword)
+        user.hashed_password = hashedPass
+        self.db.commit()
+        return "Your password has been successfully changed!"
+
+        
+        

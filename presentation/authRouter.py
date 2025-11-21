@@ -34,3 +34,11 @@ def login(user : UserLogin, service : AuthService = Depends(get_auth_service)) -
 def verifyEmail(token : str, service : AuthService = Depends(get_auth_service)) -> str:
     s = service.verify_email(token)
     return s
+
+
+@AuthRouter.post("/forgot/{token}")
+async def forgotPassword(email : str , service : AuthService = Depends(get_auth_service)) -> str:
+    s = await service.forgotPassword(email)
+    return s
+
+@
