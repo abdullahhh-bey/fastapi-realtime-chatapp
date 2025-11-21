@@ -144,6 +144,32 @@ class AuthService():
         user.hashed_password = hashedPass
         self.db.commit()
         return "Your password has been successfully changed!"
+    
+    
+    
+
+    def changePassword(self, email : str, oldpassword : str , newPassword : str) -> str:
+        user = self.db.query(User).filter( User.email == email ).first()
+        if user is None:
+            raise HTTPException(
+                status_code=404,
+                detail="No user"
+            )
+
+        check = verify_password(oldpassword , user.hashed_password)
+        if not check:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid Password"
+            )
+        
+        newpass = get_password_hash(newPassword)
+        user.hashed_password = newpass
+        self.db.commit()
+        return "Password successfully changed"
+        
+        
 
         
+    
         

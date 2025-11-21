@@ -41,4 +41,12 @@ async def forgotPassword(email : str , service : AuthService = Depends(get_auth_
     s = await service.forgotPassword(email)
     return s
 
-@
+@AuthRouter.post("/reset/{token}")
+def resetPassword(password : str , token : str, service : AuthService = Depends(get_auth_service)) -> str:
+    s = service.resetPassword(password , token)
+    return s
+
+@AuthRouter.post("/change/password")
+def changePassword(oldpass : str, newpass : str , email : str, service : AuthService = Depends(get_auth_service)) -> str:
+    s = service.changePassword(email  ,oldpass , newpass)
+    return s
