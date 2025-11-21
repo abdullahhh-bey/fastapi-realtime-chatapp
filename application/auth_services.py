@@ -36,8 +36,6 @@ class AuthService():
         
         token = create_access_token(data)
 
-        verification_link = f"Token: \n{token}\n"
-
         html = f"""
         <h3>Verify your account</h3>
         <p>Click below to verify:</p>
@@ -103,5 +101,32 @@ class AuthService():
             "access-token" : accessToken
         } 
         
+        
+        
+        
+    async def forgotPassword(self, email : str) -> str: #type hints
+        user = self.db.query(User).filter(User.email == email).first()
+        if user is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Email does not exist!"
+            )
+        
+        data = {
+            "sub" : user.username,
+            "email" : user.email
+        }
+        
+        token = create_access_token(data)
+        
+        html = f"""
+        <h3>Reset your account password</h3>
+        <p>Click below to reset:</p>
+        <p>Token:</p> 
+        <p>{token}</p>
+        """
+
+        await send_email(user.email, "Reset your password", html)
+        return "Reset Password email has been sent to your gmail."
     
     
