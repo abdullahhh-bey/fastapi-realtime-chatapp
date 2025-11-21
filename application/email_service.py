@@ -1,13 +1,13 @@
-import smtplib
+import aiosmtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
-SMTP_EMAIL = "abdullahamirr9@example.com"
-SMTP_PASSWORD = "rplj avny qhyk tnqs"
+SMTP_EMAIL = "abdullahamirr9@gmail.com"
+SMTP_PASSWORD = "xsqw pyfm venr bwil"
 
-def send_email(to_email: str, subject: str, html_content: str):
+async def send_email(to_email: str, subject: str, html_content: str):
 
     message = MIMEMultipart()
     message["From"] = SMTP_EMAIL
@@ -16,7 +16,11 @@ def send_email(to_email: str, subject: str, html_content: str):
 
     message.attach(MIMEText(html_content, "html"))
 
-    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-        server.starttls()
-        server.login(SMTP_EMAIL, SMTP_PASSWORD)
-        server.sendmail(SMTP_EMAIL, to_email, message.as_string())
+    await aiosmtplib.send(
+        message,
+        hostname=SMTP_SERVER,
+        port=SMTP_PORT,
+        start_tls=True,
+        username=SMTP_EMAIL,
+        password=SMTP_PASSWORD,
+    )

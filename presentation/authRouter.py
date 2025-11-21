@@ -16,8 +16,8 @@ def get_auth_service(db : Session = Depends(get_db)):
 
 
 @AuthRouter.post("/register")
-def register(user : UserRegister, service : AuthService = Depends(get_auth_service)):
-    u = service.register(user)
+async def register(user : UserRegister, service : AuthService = Depends(get_auth_service)):
+    u = await service.register(user)
     return u
 
 @AuthRouter.get("/users", response_model=list[UserDetails])
@@ -29,3 +29,8 @@ def getUsers(service : AuthService = Depends(get_auth_service)):
 def login(user : UserLogin, service : AuthService = Depends(get_auth_service)) -> dict:
     u = service.login(user)
     return u
+
+@AuthRouter.post("/verify")
+def verifyEmail(token : str, service : AuthService = Depends(get_auth_service)) -> str:
+    s = service.verify_email(token)
+    return s

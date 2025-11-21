@@ -4,7 +4,7 @@ from domain.models import User
 from datetime import datetime
 from fastapi import HTTPException
 from .auth_functions import verify_password, get_password_hash, create_access_token, decode_access_token
-from email_service import send_email
+from .email_service import send_email
 
 class AuthService():
     def __init__(self, db : Session):
@@ -27,11 +27,7 @@ class AuthService():
             hashed_password=hashedPassword,
             isRegistered=False,
             createdAt=datetime.utcnow()  
-        )
-
-        self.db.add(newUser)
-        self.db.commit()
-        self.db.refresh(newUser)    
+        )   
         
         data = {
             "sub" : newUser.username,
@@ -45,11 +41,14 @@ class AuthService():
         html = f"""
         <h3>Verify your account</h3>
         <p>Click below to verify:</p>
-        <a href="{verification_link}">Verify Email</a>
+        <p>"Token: \n{token}\n"</p>
         """
 
         await send_email(newUser.email, "Verify Your Account", html)
-                    
+                 
+        self.db.add(newUser)
+        self.db.commit()
+        self.db.refresh(newUser)    
         return f'Hey {newUser.username},Verify your email for complete registration' 
     
     
