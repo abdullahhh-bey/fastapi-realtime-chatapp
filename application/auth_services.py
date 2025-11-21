@@ -4,13 +4,14 @@ from domain.models import User
 from datetime import datetime
 from fastapi import HTTPException
 from .auth_functions import verify_password, get_password_hash, create_access_token, decode_access_token
+from email_service import send_email
 
 class AuthService():
     def __init__(self, db : Session):
         self.db = db
     
     
-    def register(self, user: UserRegister) -> UserDetails:
+    async def register(self, user: UserRegister) -> str:
         check = self.db.query(User).filter(User.email == user.email).first()
         if check:
             raise HTTPException(status_code=400, detail="Email already registered!")
@@ -30,10 +31,45 @@ class AuthService():
 
         self.db.add(newUser)
         self.db.commit()
-        self.db.refresh(newUser)        
-        return newUser 
-    
+        self.db.refresh(newUser)    
         
+        data = {
+            "sub" : newUser.username,
+            "email" : newUser.email
+        }
+        
+        token = create_access_token(data)
+
+        verification_link = f"Token: \n{token}\n"
+
+        html = f"""
+        <h3>Verify your account</h3>
+        <p>Click below to verify:</p>
+        <a href="{verification_link}">Verify Email</a>
+        """
+
+        await send_email(newUser.email, "Verify Your Account", html)
+                    
+        return f'Hey {newUser.username},Verify your email for complete registration' 
+    
+    
+
+    
+    def verify_email(self, token : str) -> str:
+        username = decode_access_token(token)
+        userCheck = self.db.query(User).filter(User.username == username).first()
+        if not userCheck:
+            raise HTTPException(
+                status_code=400,
+                detail="Wrong Token"
+            )
+        
+        userCheck.isRegistered = True
+        self.db.commit()
+        return "User successfully registered!"
+        
+        
+    
     def getUsers(self) -> list[UserDetails]:
         return self.db.query(User).all()
     
@@ -45,6 +81,12 @@ class AuthService():
                 status_code=404,
                 detail = "No user registered"
             )
+            
+        if not u.isRegistered:
+            raise HTTPException(
+                status_code=400,
+                detail="User not registered the email, First complete the registration process!"
+            ) 
             
         passwordCheck = verify_password(user.password , u.hashed_password)
         if not passwordCheck:
@@ -62,4 +104,5 @@ class AuthService():
             "access-token" : accessToken
         } 
         
+    
     
