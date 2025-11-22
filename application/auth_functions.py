@@ -37,3 +37,14 @@ def decode_access_token(token: str):
         return username
     except JWTError:
         return None
+    
+    
+def decode_reset_password_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("email")
+        if email is None:
+            return None
+        return email
+    except JWTError:
+        return None
