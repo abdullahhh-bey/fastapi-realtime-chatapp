@@ -1,25 +1,15 @@
-import logo from './logo.svg';
-import './App.css';
+import ChatInterface from './ChatInterface';
 
 function App() {
+  const currentUserId = 5; // Get from your auth system
+  const otherUserId = 10;   // Selected chat
+  const otherUserName = "Sara";
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ChatInterface
+      currentUserId={currentUserId}
+      otherUserId={otherUserId}
+      otherUserName={otherUserName}
+    />
   );
 }
-
-export default App;
